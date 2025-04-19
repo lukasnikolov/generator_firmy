@@ -1,26 +1,22 @@
-
 from flask import Flask, request, send_file
-from docxtpl import DocxTemplate
+from docx import Document
+import os
+import io
 import tempfile
 from flask_cors import CORS
-from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/")
+@app.route('/')
 def index():
-    return "<h1>Backend pro generování firemních smluv je aktivní.</h1>"
+    return "DOCX contract generator with formatted template is running."
 
-@app.route("/api/generate", methods=["POST"])
+@app.route('/api/generate', methods=['POST'])
 def generate():
     data = request.json
 
-    def format_date(d):
-        try:
-            return datetime.strptime(d, "%d.%m.%Y").strftime("%d.%m.%Y")
-        except:
-            return d
+    doc = Document("Rekapitulace_Ele_spol.docx")
 
     context = {
         "cislo_smlouvy": data.get("cislo_smlouvy", ""),
@@ -53,4 +49,4 @@ def generate():
     return send_file(tmp.name, as_attachment=True, download_name="Rekapitulace_firma.docx")
 
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0", port=10000)
+    app.run(debug=True)
